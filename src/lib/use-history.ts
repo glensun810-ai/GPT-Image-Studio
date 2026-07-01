@@ -138,7 +138,13 @@ export function useHistory() {
         return;
       }
       const json = await res.json();
-      const remote: HistoryItem[] = sanitizeHistory(json?.data || []);
+      const rawData = json?.data;
+      const remoteItems = Array.isArray(rawData?.items)
+        ? rawData.items
+        : Array.isArray(rawData)
+          ? rawData
+          : [];
+      const remote: HistoryItem[] = sanitizeHistory(remoteItems);
       const local = readLocal();
       // 合并：按 taskId 去重，服务器为准，保留本地未同步的
       const merged = sortHistoryDesc(dedupeHistory([...remote, ...local]));

@@ -73,7 +73,12 @@ class HistorySync {
         throw new Error(`HTTP ${res.status}`);
       }
       const json = await res.json();
-      const items: HistoryItem[] = json.data || [];
+      const rawData = json?.data;
+      const items: HistoryItem[] = Array.isArray(rawData?.items)
+        ? rawData.items
+        : Array.isArray(rawData)
+          ? rawData
+          : [];
       this.updateStatus({
         state: 'synced',
         lastSyncAt: new Date().toISOString(),

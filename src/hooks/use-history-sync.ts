@@ -50,15 +50,16 @@ export function useHistorySync({
       void sync
         .fetchAll()
         .then((serverItems) => {
+          const safeItems = Array.isArray(serverItems) ? serverItems : [];
           // 合并策略：服务器数据优先（用户可能在其他设备添加了记录）
           // 保留本地 pendingCount（未同步的本地新增）作为 fallback
           setLocalHistory((prev) => {
-            const serverIds = new Set(serverItems.map((i) => i.taskId));
+            const serverIds = new Set(safeItems.map((i) => i.taskId));
             const localOnly = prev.filter(
               (i) => !serverIds.has(i.taskId) && !i.synced
             );
             // 时间倒序合并
-            return [...serverItems, ...localOnly].sort(
+            return [...safeItems, ...localOnly].sort(
               (a, b) => b.createdAt - a.createdAt
             );
           });

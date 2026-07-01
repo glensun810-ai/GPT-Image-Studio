@@ -60,7 +60,8 @@ function readQueue(): PendingOp[] {
   try {
     const raw = localStorage.getItem(SYNC_QUEUE_KEY);
     if (!raw) return [];
-    return JSON.parse(raw) as PendingOp[];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed as PendingOp[] : [];
   } catch {
     return [];
   }

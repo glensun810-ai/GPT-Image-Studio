@@ -244,7 +244,8 @@ class HistorySync {
     try {
       const raw = localStorage.getItem(SYNC_QUEUE_KEY);
       if (raw) {
-        this.queue = JSON.parse(raw);
+        const parsed = JSON.parse(raw);
+        this.queue = Array.isArray(parsed) ? parsed : [];
       }
     } catch {
       this.queue = [];

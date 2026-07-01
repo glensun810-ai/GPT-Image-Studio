@@ -631,14 +631,15 @@ function MainApp({ user, onLogout }: { user: UserInfo; onLogout: () => void }) {
       const storedHistory = localStorage.getItem(HISTORY_STORAGE_KEY);
       if (storedHistory) {
         try {
-          const parsed = JSON.parse(storedHistory) as HistoryItem[];
-          // Backward compat: fill missing fields for old entries
-          const migrated = parsed.map((h) => ({
-            ...h,
-            tags: Array.isArray(h.tags) ? h.tags : [],
-            favorited: typeof h.favorited === 'boolean' ? h.favorited : false,
-          }));
-          setHistory(migrated);
+          const parsed = JSON.parse(storedHistory);
+          if (Array.isArray(parsed)) {
+            const migrated = parsed.map((h) => ({
+              ...h,
+              tags: Array.isArray(h.tags) ? h.tags : [],
+              favorited: typeof h.favorited === 'boolean' ? h.favorited : false,
+            }));
+            setHistory(migrated);
+          }
         } catch { /* ignore */ }
       }
       // Templates: seed defaults on first run, then load
